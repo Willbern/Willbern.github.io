@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>My New Hugo Site  | Source to Image</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.30.2" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    <link href='Willbern.github.io/dist/main.css' rel='stylesheet' type="text/css" />
+    
+      
+    
+
+    
+
+    <meta property="og:title" content="Source to Image" />
+<meta property="og:description" content="S2I 基本概念
+Source-to-Image(S2i) 是一个从代码构建镜像的框架，工作流程是：运行一个builder 基础镜像，并将用户代码注入到容器里，经过编译，参数配置等过程，最终产生一个可以运行的镜像。使用s2i的最大优势就是对开发友好，在制作S2I 镜像前，你必须理解一下几个概念 builder 镜像 和 S2I脚本
+ Builder 镜像  Builder 镜像是一个用户构建运行时镜像的基础镜像，可以是任何一个镜像；OpenShift CICD 流程中，启动自定义的builder镜像，在容器中完成从github 或者SVN 中拉取代码，编译，环境配置等过程，将这个运行的容器commit 成一个可运行的镜像。
+ S2I 脚本  S2I 必须包含以下2个脚本
+ assemble: 的主要功能是完成代码拉去，编译等工作，用户可以自定义 run： 最终生成镜像的启动命令  在制作builder 镜像时，要将这两个脚本放到builder 镜像内，那么openshift 是如何知道builder 镜像中的脚本路径的呢，每次build时，openshift 会通过以下途径检查脚本是否存在
+ 参数 &ndash;scripts-url 应用源代码的 .s2i/bin 下 通过builder 镜像的 io.openshift.s2i.scripts-url lebel  不论是 io.openshift.s2i.scripts-url 标签，还是 &ndash;scripts-url 参数，都可以通过以下的一种方式表示：
+ image:///path_to_scripts_dir Builder镜像里的绝对路径 file:///path_to_scripts_dir 宿主机的相对或者绝对路径 http(s)://path_to_scripts_dir http 服务器上的地址  S2I Builder镜像制作 为了方便Builder 基础镜像制作，Openshift 提供了Source-to-Image(S2i)工具；" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="Willbern.github.io/posts/source-to-image/" />
+
+
+
+<meta property="article:published_time" content="2018-04-11T20:12:56&#43;08:00"/>
+
+<meta property="article:modified_time" content="2018-04-11T20:12:56&#43;08:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Source to Image">
+<meta itemprop="description" content="S2I 基本概念
+Source-to-Image(S2i) 是一个从代码构建镜像的框架，工作流程是：运行一个builder 基础镜像，并将用户代码注入到容器里，经过编译，参数配置等过程，最终产生一个可以运行的镜像。使用s2i的最大优势就是对开发友好，在制作S2I 镜像前，你必须理解一下几个概念 builder 镜像 和 S2I脚本
+ Builder 镜像  Builder 镜像是一个用户构建运行时镜像的基础镜像，可以是任何一个镜像；OpenShift CICD 流程中，启动自定义的builder镜像，在容器中完成从github 或者SVN 中拉取代码，编译，环境配置等过程，将这个运行的容器commit 成一个可运行的镜像。
+ S2I 脚本  S2I 必须包含以下2个脚本
+ assemble: 的主要功能是完成代码拉去，编译等工作，用户可以自定义 run： 最终生成镜像的启动命令  在制作builder 镜像时，要将这两个脚本放到builder 镜像内，那么openshift 是如何知道builder 镜像中的脚本路径的呢，每次build时，openshift 会通过以下途径检查脚本是否存在
+ 参数 &ndash;scripts-url 应用源代码的 .s2i/bin 下 通过builder 镜像的 io.openshift.s2i.scripts-url lebel  不论是 io.openshift.s2i.scripts-url 标签，还是 &ndash;scripts-url 参数，都可以通过以下的一种方式表示：
+ image:///path_to_scripts_dir Builder镜像里的绝对路径 file:///path_to_scripts_dir 宿主机的相对或者绝对路径 http(s)://path_to_scripts_dir http 服务器上的地址  S2I Builder镜像制作 为了方便Builder 基础镜像制作，Openshift 提供了Source-to-Image(S2i)工具；">
+
+
+<meta itemprop="datePublished" content="2018-04-11T20:12:56&#43;08:00" />
+<meta itemprop="dateModified" content="2018-04-11T20:12:56&#43;08:00" />
+<meta itemprop="wordCount" content="647">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Source to Image"/>
+<meta name="twitter:description" content="S2I 基本概念
+Source-to-Image(S2i) 是一个从代码构建镜像的框架，工作流程是：运行一个builder 基础镜像，并将用户代码注入到容器里，经过编译，参数配置等过程，最终产生一个可以运行的镜像。使用s2i的最大优势就是对开发友好，在制作S2I 镜像前，你必须理解一下几个概念 builder 镜像 和 S2I脚本
+ Builder 镜像  Builder 镜像是一个用户构建运行时镜像的基础镜像，可以是任何一个镜像；OpenShift CICD 流程中，启动自定义的builder镜像，在容器中完成从github 或者SVN 中拉取代码，编译，环境配置等过程，将这个运行的容器commit 成一个可运行的镜像。
+ S2I 脚本  S2I 必须包含以下2个脚本
+ assemble: 的主要功能是完成代码拉去，编译等工作，用户可以自定义 run： 最终生成镜像的启动命令  在制作builder 镜像时，要将这两个脚本放到builder 镜像内，那么openshift 是如何知道builder 镜像中的脚本路径的呢，每次build时，openshift 会通过以下途径检查脚本是否存在
+ 参数 &ndash;scripts-url 应用源代码的 .s2i/bin 下 通过builder 镜像的 io.openshift.s2i.scripts-url lebel  不论是 io.openshift.s2i.scripts-url 标签，还是 &ndash;scripts-url 参数，都可以通过以下的一种方式表示：
+ image:///path_to_scripts_dir Builder镜像里的绝对路径 file:///path_to_scripts_dir 宿主机的相对或者绝对路径 http(s)://path_to_scripts_dir http 服务器上的地址  S2I Builder镜像制作 为了方便Builder 基础镜像制作，Openshift 提供了Source-to-Image(S2i)工具；"/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="Willbern.github.io" class="f3 fw2 hover-white no-underline white-90 dib">
+      My New Hugo Site
+    </a>
+    <div class="flex-l items-center">
+      
+      
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+    <main class="pb7" role="main">
+      
+  <div class="flex-l mt2 mw8 center">
+    <article class="center cf pv5 ph3 ph4-ns mw7">
+      <header>
+        <p class="f6 b helvetica tracked">
+          POSTS
+        </p>
+        <h1 class="f1">
+          Source to Image
+        </h1>
+      </header>
+      <div class="nested-copy-line-height lh-copy f4 nested-links nested-img mid-gray">
+        
+
+<p>S2I 基本概念</p>
+
+<p><a href="https://github.com/openshift/source-to-image">Source-to-Image(S2i)</a> 是一个从代码构建镜像的框架，工作流程是：运行一个builder 基础镜像，并将用户代码注入到容器里，经过编译，参数配置等过程，最终产生一个可以运行的镜像。使用s2i的最大优势就是对开发友好，在制作S2I 镜像前，你必须理解一下几个概念 builder 镜像 和 S2I脚本</p>
+
+<ul>
+<li>Builder 镜像</li>
+</ul>
+
+<p>Builder 镜像是一个用户构建运行时镜像的基础镜像，可以是任何一个镜像；OpenShift CICD 流程中，启动自定义的builder镜像，在容器中完成从github 或者SVN 中拉取代码，编译，环境配置等过程，将这个运行的容器commit 成一个可运行的镜像。</p>
+
+<ul>
+<li>S2I 脚本</li>
+</ul>
+
+<p>S2I 必须包含以下2个脚本</p>
+
+<ul>
+<li>assemble:  的主要功能是完成代码拉去，编译等工作，用户可以自定义</li>
+<li>run： 最终生成镜像的启动命令</li>
+</ul>
+
+<p>在制作builder 镜像时，要将这两个脚本放到builder 镜像内，那么openshift 是如何知道builder 镜像中的脚本路径的呢，每次build时，openshift 会通过以下途径检查脚本是否存在</p>
+
+<ol>
+<li>参数 &ndash;scripts-url</li>
+<li>应用源代码的 .s2i/bin 下</li>
+<li>通过builder 镜像的 <strong>io.openshift.s2i.scripts-url</strong> lebel</li>
+</ol>
+
+<p>不论是 io.openshift.s2i.scripts-url 标签，还是 &ndash;scripts-url  参数，都可以通过以下的一种方式表示：</p>
+
+<ul>
+<li><strong>image:///path_to_scripts_dir</strong> Builder镜像里的绝对路径</li>
+<li><strong>file:///path_to_scripts_dir</strong> 宿主机的相对或者绝对路径</li>
+<li><strong>http(s)://path_to_scripts_dir</strong> http 服务器上的地址</li>
+</ul>
+
+<h2 id="s2i-builder镜像制作">S2I Builder镜像制作</h2>
+
+<p>为了方便Builder 基础镜像制作，Openshift 提供了<a href="https://github.com/openshift/source-to-image">Source-to-Image(S2i)</a>工具；</p>
+
+<p>github 项目地址： <a href="https://github.com/openshift/source-to-image">https://github.com/openshift/source-to-image</a></p>
+
+<p>下载地址： <a href="https://github.com/openshift/source-to-image/releases">https://github.com/openshift/source-to-image/releases</a></p>
+
+<p>下面介绍如何制作一个tomcat + maven 的builder 基础镜像，并通过这个builder 镜像完成从代码到可运行镜像的构建</p>
+
+<p><strong>Step1 :</strong></p>
+
+<p>下载S2I 工具，并执行一下命令：</p>
+
+<pre><code class="language-shell">$ s2i create registry.ocp.will.com/s2i/tomcat-maven-builder:1.0 dest
+</code></pre>
+
+<p>dest 是s2i工具自动为我们生成的一些配置文件；结构如下：</p>
+
+<ul>
+<li>Dockerfile</li>
+<li>Makefile</li>
+<li>s2i/bin/assemble</li>
+<li>s2i/bin/run</li>
+<li>s2i/bin/save-artifacts</li>
+<li>s2i/bin/usage</li>
+</ul>
+
+<p><strong>Step2 :</strong></p>
+
+<p>准备好基础的工具包：apache-maven-3.5.2， apache-tomcat-8.0.46， jdk1.8.0_121，当然也可以在制作镜像的过程中下载安装；</p>
+
+<p>编辑Dockerfile</p>
+
+<pre><code class="language-dockerfile"># registry.ocp.will.com/s2i/tomcat-maven-builder:1.0
+FROM openshift/base-centos7
+
+# TODO: Put the maintainer name in the image metadata
+MAINTAINER will &lt;zhguo@dataman-inc.com&gt;
+
+# TODO: Rename the builder environment variable to inform users about application you provide them
+# ENV BUILDER_VERSION 1.0
+
+# TODO: Set labels used in OpenShift to describe the builder image
+#LABEL io.k8s.description=&quot;Platform for building xyz&quot; \
+#      io.k8s.display-name=&quot;builder x.y.z&quot; \
+#      io.openshift.expose-services=&quot;8080:http&quot; \
+#      io.openshift.tags=&quot;builder,x.y.z,etc.&quot;
+
+# TODO: Install required packages here:
+# RUN yum install -y ... &amp;&amp; yum clean all -y
+
+# TODO (optional): Copy the builder files into /opt/app-root
+# COPY ./&lt;builder_folder&gt;/ /opt/app-root/
+COPY jdk1.8.0_121 /opt/app-root/jdk1.8.0_121
+COPY apache-tomcat-8.0.46 /opt/app-root/apache-tomcat-8.0.46
+COPY apache-maven-3.5.2 /opt/app-root/apache-maven-3.5.2
+
+
+# TODO: Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image
+# sets io.openshift.s2i.scripts-url label that way, or update that label
+COPY ./s2i/bin/ /usr/libexec/s2i
+
+# Set env
+ENV JAVA_HOME /opt/app-root/jdk1.8.0_121
+ENV TOMCAT_HOME /opt/app-root/apache-tomcat-8.0.46
+ENV MAVEN_HOME /opt/app-root/apache-maven-3.5.2
+ENV PATH $JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH
+
+# TODO: Drop the root user and make the content of /opt/app-root owned by user 1001
+# RUN chown -R 1001:1001 /opt/app-root
+# openshift 为了容器安全，使用非root 用户启动容器，默认是一个root组的随机id 用户
+# openshift/base-centos7 基础镜像中有用户id为1001的root组用户，所有我们将需要操作的数据文件都赋给
+# 1001:0
+RUN chown -R 1001:0 /opt/app-root
+RUN chown -R 1001:0 /usr/libexec/s2i
+
+# This default user is created in the openshift/base-centos7 image
+USER 1001
+WORKDIR /opt/app-root/
+
+# TODO: Set the default port for applications built using this image
+EXPOSE 8080
+
+# TODO: Set the default CMD for the image
+# CMD [&quot;/usr/libexec/s2i/usage&quot;]
+
+</code></pre>
+
+<p>编辑 assemble 文件</p>
+
+<pre><code class="language-shell">#!/bin/bash -e
+#
+# S2I assemble script for the 'registry.ocp.will.com/s2i/tomcat-maven-builder:1.0' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#       https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+
+# If the 'registry.ocp.will.com/s2i/tomcat-maven-builder:1.0' assemble script is executed with the '-h' flag, print the usage.
+if [[ &quot;$1&quot; == &quot;-h&quot; ]]; then
+        exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ &quot;$(ls /tmp/artifacts/ 2&gt;/dev/null)&quot; ]; then
+  echo &quot;---&gt; Restoring build artifacts...&quot;
+  mv /tmp/artifacts/. ./
+fi
+
+DEPLOY_DIR=$TOMCAT_HOME/webapps/
+LOCAL_SOURCE_DIR=${HOME}
+mkdir -p $LOCAL_SOURCE_DIR
+
+echo $LOCAL_SOURCE_DIR
+
+# builder过程默认会将源代码下载到 /tmp/src/ 目录下
+echo &quot;---&gt; Installing application source...&quot;
+ls /tmp/src/
+cp -Rf /tmp/src/. $LOCAL_SOURCE_DIR
+
+echo &quot;---&gt; Building application from source with maven...&quot;
+# TODO: Add build steps for your application, eg npm install, bundle install, pip install, etc.
+# If a pom.xml is present, this is a normal build scenario
+# so run maven.
+if [ -f &quot;$LOCAL_SOURCE_DIR/pom.xml&quot; ]; then
+  if [ -z &quot;$MAVEN_ARGS&quot; ]; then
+    export MAVEN_ARGS=&quot;package -Popenshift -DskipTests -B&quot;
+  fi
+
+  echo &quot;Found pom.xml... attempting to build with 'mvn ${MAVEN_ARGS}'&quot;
+    cd $LOCAL_SOURCE_DIR
+  mvn --version
+  mvn $MAVEN_ARGS
+
+  ERR=$?
+  if [ $ERR -ne 0 ]; then
+    echo &quot;Aborting due to error code $ERR from mvn package&quot;
+    exit $ERR
+  fi
+
+# 将编译后的war 包移动到tomcat 部署目录下
+TARGET_DIR=${LOCAL_SOURCE_DIR}/target
+  echo &quot;Moving built war files into $DEPLOY_DIR for later deployment...&quot;
+  mv ${TARGET_DIR}/*.war $DEPLOY_DIR
+fi
+
+echo &quot;...done&quot;
+</code></pre>
+
+<p>编辑run 文件</p>
+
+<pre><code class="language-shell">#!/bin/bash -e
+#
+# S2I run script for the 'registry.ocp.will.com/s2i/go-builder:1.0' image.
+# The run script executes the server that runs your application.
+#
+# For more information see the documentation:
+#       https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+# 
+
+# 这个命令作为可运行镜像的启动命令
+exec $TOMCAT_HOME/bin/catalina.sh run
+</code></pre>
+
+<p>在builder 镜像中执行完assemble 脚本后，openshift 会将这个运行态的容器commit 成一个镜像，并推送到内容镜像仓库，至此，s2i(从源码构建镜像)的过程就完成了。</p>
+
+<p><strong>Step 3</strong>:</p>
+
+<p>更了更方便的使用builder 镜像实现s2i 流程，我们制作一个ImageStraem, 脚本如下：</p>
+
+<p>执行oc create -f tomcat-maven.json</p>
+
+<pre><code class="language-json">{
+    &quot;kind&quot;: &quot;ImageStream&quot;,
+    &quot;apiVersion&quot;: &quot;v1&quot;,
+    &quot;metadata&quot;: {
+        &quot;name&quot;: &quot;java8-tomcat8&quot;,
+                &quot;annotations&quot;:{&quot;openshift.io/image.insecureRepository&quot;: &quot;true&quot;}
+    },
+    &quot;spec&quot;: {
+        &quot;dockerImageRepository&quot;: &quot;registry.ocp.will.com:5000/s2i/tomcat-maven-builder&quot;,
+        &quot;tags&quot;: [
+            {
+                &quot;name&quot;: &quot;1.0&quot;,
+                &quot;annotations&quot;: {
+                    &quot;description&quot;: &quot;java8-tomcat8&quot;,
+                    &quot;iconClass&quot;: &quot;tomcat8&quot;,
+                    &quot;tags&quot;: &quot;builder,java,tomcat&quot;,
+                    &quot;supports&quot;:&quot;java:8,tomcat8&quot;,
+                    &quot;sampleRepo&quot;: &quot;https://github.com/Willbern/openshift-jee-sample.git&quot;,
+                    &quot;version&quot;: &quot;1.0&quot;
+                }
+            }
+        ]
+    }
+}
+
+</code></pre>
+
+<p>从UI 发布应用，选择Browse Catalog， 搜索tomcat，就会发现我们制作的ImageStream, 如下：</p>
+
+<p><img src="./picture/tomcat-maven-imagestream.png" alt="tomcat-maven-imagestream" /></p>
+
+<p>s2i 还是有更高级的用法，比如增量编译等，这里就不详细介绍了，感兴趣的请<a href="https://github.com/openshift-s2i/s2i-wildfly/tree/master/11.0">点击这里</a>参考：</p>
+
+<p>​</p>
+
+      </div>
+    </article>
+    <aside class="ph3 mt2 mt6-ns">
+      
+
+
+
+
+
+
+
+
+    </aside>
+  </div>
+
+    </main>
+    <footer class="bg-near-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="Willbern.github.io" >
+    &copy; 2018 My New Hugo Site
+  </a>
+  
+
+
+
+
+
+
+
+
+  </div>
+</footer>
+
+    <script src="Willbern.github.io/dist/app.bundle.js" async></script>
+
+  </body>
+</html>
