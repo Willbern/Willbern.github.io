@@ -21,14 +21,14 @@
     
 
     
-      <link href="Willbern.github.io/index.xml" rel="alternate" type="application/rss+xml" title="My New Hugo Site" />
-      <link href="Willbern.github.io/index.xml" rel="feed" type="application/rss+xml" title="My New Hugo Site" />
+      <link href="Willbern.github.io/posts/index.xml" rel="alternate" type="application/rss+xml" title="My New Hugo Site" />
+      <link href="Willbern.github.io/posts/index.xml" rel="feed" type="application/rss+xml" title="My New Hugo Site" />
     
 
-    <meta property="og:title" content="My New Hugo Site" />
+    <meta property="og:title" content="Posts" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="Willbern.github.io/" />
+<meta property="og:url" content="Willbern.github.io/posts/" />
 
 
 
@@ -43,10 +43,10 @@
 
 
 
-<meta itemprop="name" content="My New Hugo Site">
+<meta itemprop="name" content="Posts">
 <meta itemprop="description" content="">
 
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="My New Hugo Site"/>
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Posts"/>
 <meta name="twitter:description" content=""/>
 
   </head>
@@ -81,7 +81,7 @@
 
       <div class="tc-l pv4 pv6-l ph3 ph4-ns">
         <h1 class="f2 f-subheadline-l fw2 white-90 mb0 lh-title">
-          My New Hugo Site
+          Posts
         </h1>
         
       </div>
@@ -91,68 +91,42 @@
 
     <main class="pb7" role="main">
       
-  <article class="cf ph3 ph5-l pv3 pv4-l f4 tc-l center measure-wide lh-copy mid-gray">
-    
+  <article class="cf pa3 pa4-m pa4-l">
+    <div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links nested-img mid-gray">
+      
+    </div>
   </article>
-  
-  
-  
-  
-  
-  
-  
+  <div class="mw8 center">
     
-    
-
-    <div class="pa3 pa4-ns w-100 w-70-ns center">
+    <section class="flex-ns flex-wrap justify-around mt5">
       
-       
-          <h1 class="flex-none">
-            Recent Posts
-          </h1>
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="Willbern.github.io/posts/s2i/" class="link black dim">
         
-
-      
-
-      <section class="w-100 mw8">
-        
-        
-          <div class="relative w-100 mb4">
-            
-<article class="bb b--black-10">
-  <div class="db pv4 ph3 ph0-l no-underline dark-gray">
-    <div class="flex flex-column flex-row-ns">
-      
-      <div class="blah w-100">
-        <h1 class="f3 fw1 athelas mt0 lh-title">
-          <a href="Willbern.github.io/posts/s2i/" class="color-inherit dim link">
-            
-            </a>
-        </h1>
-        <div class="f6 f5-l lh-copy nested-copy-line-height nested-links">
-          S2I 基本概念
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      S2I 基本概念
 Source-to-Image(S2i) 是一个从代码构建镜像的框架，工作流程是：运行一个builder 基础镜像，并将用户代码注入到容器里，经过编译，参数配置等过程，最终产生一个可以运行的镜像。使用s2i的最大优势就是对开发友好，在制作S2I 镜像前，你必须理解一下几个概念 builder 镜像 和 S2I脚本
  Builder 镜像  Builder 镜像是一个用户构建运行时镜像的基础镜像，可以是任何一个镜像；OpenShift CICD 流程中，启动自定义的builder镜像，在容器中完成从github 或者SVN 中拉取代码，编译，环境配置等过程，将这个运行的容器commit 成一个可运行的镜像。
  S2I 脚本  S2I 必须包含以下2个脚本
  assemble: 的主要功能是完成代码拉去，编译等工作，用户可以自定义 run： 最终生成镜像的启动命令  在制作builder 镜像时，要将这两个脚本放到builder 镜像内，那么openshift 是如何知道builder 镜像中的脚本路径的呢，每次build时，openshift 会通过以下途径检查脚本是否存在
  参数 &ndash;scripts-url 应用源代码的 .s2i/bin 下 通过builder 镜像的 io.openshift.s2i.scripts-url lebel  不论是 io.openshift.s2i.scripts-url 标签，还是 &ndash;scripts-url 参数，都可以通过以下的一种方式表示：
  image:///path_to_scripts_dir Builder镜像里的绝对路径 file:///path_to_scripts_dir 宿主机的相对或者绝对路径 http(s)://path_to_scripts_dir http 服务器上的地址  S2I Builder镜像制作 为了方便Builder 基础镜像制作，Openshift 提供了Source-to-Image(S2i)工具；
-        </div>
-          <a href="Willbern.github.io/posts/s2i/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-        
-      </div>
     </div>
   </div>
-</article>
+</div>
 
-          </div>
-        
-      </section>
-
+        </div>
       
-
-      </div>
+    </section>
   
+
+  </div>
 
     </main>
     <footer class="bg-near-black bottom-0 w-100 pa3" role="contentinfo">

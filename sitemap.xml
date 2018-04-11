@@ -3,12 +3,21 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>Willbern.github.io/posts/s2i/</loc>
+  </url>
+  
+  <url>
     <loc>Willbern.github.io/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>Willbern.github.io/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>Willbern.github.io/posts/</loc>
     <priority>0</priority>
   </url>
   
